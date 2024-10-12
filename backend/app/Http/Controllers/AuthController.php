@@ -24,7 +24,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // توليد توكن للمستخدم بعد التسجيل
+        // Create token for new register
         $token = $user->createToken('authToken')->plainTextToken;
 
         return response()->json([
@@ -50,12 +50,16 @@ class AuthController extends Controller
             ]);
         }
 
-        // توليد توكن للمستخدم بعد تسجيل الدخول
+        // Create token after auth
         $token = $user->createToken('authToken')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful!',
             'token' => $token,
+            'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            ]
         ]);
     }
 
@@ -68,7 +72,7 @@ class AuthController extends Controller
     // Logout
     public function logout(Request $request)
     {
-        // حذف التوكن الحالي
+        // Delete actuale token
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
