@@ -103,7 +103,11 @@ return [
         ...array_filter(
             explode(',', env('APP_PREVIOUS_KEYS', ''))
         ),
+
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
     ],
+
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -123,4 +127,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    
 ];
