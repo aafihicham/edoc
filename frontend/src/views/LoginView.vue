@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import http from 'axios';
+import AuthService from '../services/AuthService';
 
 export default {
   data() {
@@ -67,47 +67,58 @@ export default {
       password: ''
     };
   },
-  methods: {
-  async submitForm() {
-    // Input validation
-    if (!this.email || !this.password) {
-      alert('Please fill in both email and password.');
-      return;
+  computed: {
+    isLoggedIn() {
+      return !!localStorage.getItem('token');
     }
-
-    try {
-      const response = await http.post('http://127.0.0.1:8000/api/login', {
-        email: this.email,
-        password: this.password
-      });
-      
-      // Assuming the response contains the user's name and token
-      const { user, token } = response.data;
-
-      // Store the token in local storage (or Vuex store if you use Vuex)
-      localStorage.setItem('token', token);
-
-      // Show a welcome message
-      alert(`Welcome, ${user.name}! You have successfully logged in.`);
-
-      // Redirect to the dashboard or any protected route after login
+  },
+  mounted() {
+    if (this.isLoggedIn) {
+      // Redirect to dashboard if already logged in
       this.$router.push('/dashboard');
+    }
+  },
+  methods: {
+    async submitForm() {
+      // Input validation
+      if (!this.email || !this.password) {
+        alert('Please fill in both email and password.');
+        return;
+      }
 
-    } catch (error) {
-      // Check for a response from the server
-      if (error.response) {
-        console.error('Login failed:', error.response.data);
-        
-        // Display error message from server
-        alert(`Login failed: ${error.response.data.message || 'Invalid credentials'}`);
+      try {
+        const response = await AuthService.login({ email: this.email, password: this.password });
+        console.log('Response:', response);
+
+        if (response && response.token && response.user) {
+            const { user, token } = response;
+
+            // Store the token in local storage
+            localStorage.setItem('token', token);
+
+        // Show a welcome message
+        alert(`Welcome, ${user.name}! You have successfully logged in.`);
+
+        // Redirect to the dashboard or any protected route after login
+        this.$router.push('/dashboard');
+
       } else {
-        // Handle network errors
-        console.error('Network error:', error);
-        alert('Login failed: Network error. Please check your connection or try again later.');
+            throw new Error("Unexpected response structure");
+        }
+
+      } catch (error) {
+        // Check for a response from the server
+        if (error.response) {
+          console.error('Login failed:', error.response.data);
+          alert(`Login failed: ${error.response.data.message || 'Invalid credentials'}`);
+        } else {
+          // Handle network errors
+          console.error('Network error:', error);
+          alert('Login failed: Network error. Please check your connection or try again later.');
+        }
       }
     }
   }
-}
 };
 </script>
 

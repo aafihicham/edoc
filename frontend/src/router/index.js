@@ -2,6 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
+import AuthService from '../services/AuthService'
+import Test from '../views/Test.vue'
+
+
+import DashboardLayout from '../layout/DashboardLayout.vue';
+import Home from '../views/Dashboard/Home.vue';
+import Profile from '../views/Dashboard/Profile.vue';
+import Settings from '../views/Dashboard/Settings.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,9 +22,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
+
       component: () => import('../views/AboutView.vue')
     },
 
@@ -27,9 +33,33 @@ const router = createRouter({
     },
 
     {
+      path: '/test',
+      name: 'test',
+      component: Test
+    },
+
+    {
       path: '/login',
       name: 'login',
       component: LoginView
+    },
+    {
+      path: '/dashboard',
+      name: 'DashboardLayout',
+      component: DashboardLayout,
+      children: [
+        { path: 'home', component: Home },
+        { path: 'profile', component: Profile },
+        { path: 'settings', component: Settings }
+      ],
+      beforeEnter: (to, from, next) => {
+        const isLoggedIn = !!localStorage.getItem('token'); 
+        if (isLoggedIn) {
+            next(); 
+        } else {
+            next({ path: '/login' }); 
+        }
+    }
     },
   ]
 })
