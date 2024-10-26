@@ -34,8 +34,7 @@ const router = createRouter({
       component: DashboardLayout,
       children: [
         { path: 'home', component: Home },
-        { path: 'profile/:publisherId', component: Profile, props: true }, 
-        { path: 'profile', component: Profile, props: { publisherId: null } },
+        { path: 'profile', component: Profile},
         { path: 'settings', component: Settings },
         { path: 'documents', component: Documents },
         { path: 'categories', component: Categories },

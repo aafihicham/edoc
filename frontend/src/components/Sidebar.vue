@@ -59,12 +59,14 @@
 
 export default {
 
+
   data() {
     return {
       collapsed: false 
     };
   },
 
+  
   methods: {
       logout() {
         localStorage.removeItem('token');
@@ -74,5 +76,7 @@ export default {
       this.collapsed = !this.collapsed;
     }
     }
+
+    
 };
 </script>

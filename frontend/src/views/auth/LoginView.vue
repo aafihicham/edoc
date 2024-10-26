@@ -91,19 +91,20 @@ export default {
         console.log('Response:', response);
 
         if (response && response.token && response.user) {
-            const { user, token } = response;
+          const { user, token } = response;
 
-            // Store the token in local storage
-            localStorage.setItem('token', token);
+          // Store the token and publisher ID in local storage
+          localStorage.setItem('token', token);
+          localStorage.setItem('userId', user.publisher_id); // Save publisher ID
 
-        // Show a welcome message
-        alert(`Welcome, ${user.name}! You have successfully logged in.`);
+          // Show a welcome message
+          alert(`Welcome, ${user.name}! You have successfully logged in.`);
 
-        // Redirect to the dashboard or any protected route after login
-        this.$router.push('/dashboard');
+          // Redirect to the dashboard or any protected route after login
+          this.$router.push('/dashboard');
 
-      } else {
-            throw new Error("Unexpected response structure");
+        } else {
+          throw new Error("Unexpected response structure");
         }
 
       } catch (error) {

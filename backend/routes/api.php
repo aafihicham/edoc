@@ -34,3 +34,5 @@ Route::post('/publishers', [PublisherController::class, 'store']);
 Route::get('/publishers/{id}', [PublisherController::class, 'show']);
 Route::put('/publishers/{id}', [PublisherController::class, 'update']);
 Route::delete('/publishers/{id}', [PublisherController::class, 'destroy']);
+
+

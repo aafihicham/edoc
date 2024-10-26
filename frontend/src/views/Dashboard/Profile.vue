@@ -70,31 +70,25 @@
 
 <script>
 import http from "axios";
-import { ref, onMounted } from "vue"; // Import Vue's ref and onMounted
+import { ref, onMounted } from "vue";
 
 export default {
-  props: {
-    publisherId: {
-      type: [Number, String],
-      required: true,
-    },
-  },
-  setup(props) {
+  setup() {
     const publisher = ref(null);
     const password = ref("");
     const confirmPassword = ref("");
 
-    // Check if publisherId is provided
-    if (!props.publisherId) {
-      alert("Publisher ID is required.");
-      // Optionally, you can redirect or handle this case as needed.
-    } else {
-      fetchPublisher(); // Only fetch if publisherId is valid
-    }
+    // Fetch publisher ID from local storage
+    const publisherId = localStorage.getItem('userId');
 
     const fetchPublisher = async () => {
+      if (!publisherId) {
+        alert("Publisher ID is required.");
+        return;
+      }
+
       try {
-        const response = await http.get(`http://127.0.0.1:8000/api/publishers/${props.publisherId}`);
+        const response = await http.get(`http://127.0.0.1:8000/api/publishers/${publisherId}`);
         publisher.value = response.data.data.publisher;
       } catch (error) {
         console.error("Failed to load publisher data:", error);
@@ -108,7 +102,7 @@ export default {
       }
 
       try {
-        const response = await http.put(`http://127.0.0.1:8000/api/publishers/${props.publisherId}`, {
+        const response = await http.put(`http://127.0.0.1:8000/api/publishers/${publisherId}`, {
           name: publisher.value.name,
           email: publisher.value.email,
           password: password.value,
@@ -120,6 +114,9 @@ export default {
         alert("Failed to update profile. Please try again later.");
       }
     };
+
+    // Fetch publisher data when component is mounted
+    onMounted(fetchPublisher);
 
     return {
       publisher,
